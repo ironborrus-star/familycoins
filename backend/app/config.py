@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     project_name: str = "FamilyCoins API"
     
     # База данных
-    database_url: str = "sqlite+aiosqlite:///./familycoins.db"
+    database_url: str = "postgresql+asyncpg://user:password@localhost:5432/familycoins"
     
     # Redis
     redis_url: str = "redis://localhost:6379"
@@ -40,11 +40,19 @@ class Settings(BaseSettings):
     @validator("backend_cors_origins", pre=True)
     def assemble_cors_origins(cls, v: str | List[str]) -> List[str]:
         """Парсинг CORS origins"""
-        if isinstance(v, str) and not v.startswith("["):
+        if isinstance(v, str):
+            if v.startswith("[") and v.endswith("]"):
+                # Попытка парсинга JSON-like строки
+                import json
+                try:
+                    return json.loads(v)
+                except:
+                    pass
+            # Парсинг как список через запятую
             return [i.strip() for i in v.split(",")]
-        elif isinstance(v, (list, str)):
+        elif isinstance(v, list):
             return v
-        raise ValueError(v)
+        return ["*"]
     
     @property
     def is_production(self) -> bool:
@@ -54,20 +62,6 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
-        # Маппинг переменных окружения
-        fields = {
-            "database_url": {"env": "DATABASE_URL"},
-            "redis_url": {"env": "REDIS_URL"},
-            "jwt_secret_key": {"env": "JWT_SECRET_KEY"},
-            "jwt_algorithm": {"env": "JWT_ALGORITHM"},
-            "access_token_expire_minutes": {"env": "ACCESS_TOKEN_EXPIRE_MINUTES"},
-            "backend_cors_origins": {"env": "BACKEND_CORS_ORIGINS"},
-            "log_level": {"env": "LOG_LEVEL"},
-            "environment": {"env": "ENVIRONMENT"},
-            "debug": {"env": "DEBUG"},
-            "host": {"env": "HOST"},
-            "port": {"env": "PORT"},
-        }
 
 
 # Глобальный экземпляр настроек
