@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     project_name: str = "FamilyCoins API"
     
     # База данных
-    database_url: str = "postgresql+asyncpg://user:password@localhost:5432/familycoins"
+    database_url: str = "sqlite+aiosqlite:///./familycoins.db"
     
     # Redis
     redis_url: str = "redis://localhost:6379"
