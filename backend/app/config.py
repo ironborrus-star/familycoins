@@ -38,8 +38,10 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     
     @validator("backend_cors_origins", pre=True)
-    def assemble_cors_origins(cls, v: str | List[str]) -> List[str]:
+    def assemble_cors_origins(cls, v):
         """Парсинг CORS origins"""
+        if v is None:
+            return ["*"]
         if isinstance(v, str):
             if v.startswith("[") and v.endswith("]"):
                 # Попытка парсинга JSON-like строки
