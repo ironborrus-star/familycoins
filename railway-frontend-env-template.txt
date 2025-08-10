@@ -1,0 +1,17 @@
+# Railway Frontend Environment Variables Template
+# Скопируйте эти переменные в Railway Dashboard для Frontend сервиса
+
+# API конфигурация
+API_BASE_URL=https://your-backend-service.railway.app
+
+# Информация о приложении
+APP_NAME=FamilyCoins
+APP_VERSION=1.0.0
+ENVIRONMENT=production
+
+# Railway автоматически устанавливает
+PORT=${{PORT}}
+RAILWAY_STATIC_URL=${{RAILWAY_STATIC_URL}}
+
+# Дополнительные настройки (опционально)
+# Если нужны специфичные настройки для продакшена

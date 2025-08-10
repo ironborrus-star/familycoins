@@ -16,7 +16,9 @@
 1. Нажмите "New Project"
 2. Выберите "Deploy from GitHub repo"
 3. Выберите репозиторий с проектом FamilyCoins
-4. Railway автоматически обнаружит `railway-simple.json` и `Dockerfile`
+4. Railway автоматически обнаружит `railway-backend.toml` и `Dockerfile`
+
+⚠️ **Важно для монорепо**: Для деплоя frontend смотрите [RAILWAY_GIT_DEPLOY_GUIDE.md](RAILWAY_GIT_DEPLOY_GUIDE.md)
 
 ## Шаг 3: Добавление баз данных
 

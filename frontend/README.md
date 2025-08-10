@@ -29,7 +29,7 @@
 - Работающий backend API на http://localhost:8000
 - Современный веб-браузер с поддержкой ES6+
 
-### Инструкции
+### Локальная разработка
 
 1. **Запустите backend сервер:**
    ```bash
@@ -37,24 +37,42 @@
    python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
    ```
 
-2. **Откройте frontend:**
-   - Способ 1: Откройте файл `index.html` напрямую в браузере
-   - Способ 2: Используйте локальный веб-сервер (рекомендуется):
+2. **Настройте конфигурацию frontend:**
+   ```bash
+   cd frontend
+   # Создайте config.js из шаблона
+   cp config.js.template config.js
+   # Или создайте вручную:
+   echo "window.APP_CONFIG = { API_BASE_URL: 'http://localhost:8000' };" > config.js
+   ```
+
+3. **Запустите frontend:**
+   - **Способ 1: Автоматический запуск (рекомендуется)**
      ```bash
-     # Python 3
      cd frontend
-     python -m http.server 8080
-     
-     # Node.js (если установлен)
-     npx serve .
-     
-     # VS Code Live Server
-     # Установите расширение Live Server и откройте index.html
+     python3 start_server.py
+     ```
+   
+   - **Способ 2: Ручной запуск**
+     ```bash
+     cd frontend
+     python3 -m http.server 8080
+     ```
+   
+   - **Способ 3: Docker (как в продакшене)**
+     ```bash
+     # Из корня проекта
+     docker build -f Dockerfile.frontend -t familycoins-frontend .
+     docker run -p 8080:80 -e API_BASE_URL=http://localhost:8000 familycoins-frontend
      ```
 
-3. **Откройте в браузере:**
+4. **Откройте в браузере:**
    - При использовании локального сервера: http://localhost:8080
    - При прямом открытии: file:///path/to/frontend/index.html
+
+### Продакшн деплой
+
+Для деплоя на Railway см. [FRONTEND_RAILWAY_DEPLOY.md](../FRONTEND_RAILWAY_DEPLOY.md)
 
 ## Тестирование
 
