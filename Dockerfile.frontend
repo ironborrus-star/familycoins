@@ -1,8 +1,10 @@
 # Dockerfile для Frontend (nginx)
 FROM nginx:alpine
 
-# Копируем статические файлы frontend
-COPY frontend/ /usr/share/nginx/html/
+# Копируем только статические файлы frontend
+COPY frontend/*.html /usr/share/nginx/html/
+COPY frontend/*.css /usr/share/nginx/html/
+COPY frontend/*.js /usr/share/nginx/html/
 
 # Копируем конфигурацию nginx
 COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
