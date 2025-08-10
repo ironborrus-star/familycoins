@@ -1,49 +1,36 @@
-# Многоэтапная сборка для оптимизации размера образа
-FROM python:3.11-slim as builder
+# Dockerfile для Railway deployment
+FROM python:3.11-slim
 
-# Установка зависимостей для сборки
+# Установка зависимостей системы
 RUN apt-get update && apt-get install -y \
     gcc \
-    g++ \
     && rm -rf /var/lib/apt/lists/*
 
-# Создание виртуального окружения
-RUN python -m venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
+# Создание рабочей директории
+WORKDIR /app
 
 # Копирование и установка Python зависимостей
 COPY backend/requirements.txt .
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
-
-# Финальный образ
-FROM python:3.11-slim
-
-# Создание пользователя без root прав
-RUN groupadd -r appuser && useradd -r -g appuser appuser
-
-# Копирование виртуального окружения из builder стадии
-COPY --from=builder /opt/venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
-
-# Установка рабочей директории
-WORKDIR /app
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Копирование кода приложения
-COPY --chown=appuser:appuser backend/ .
-
-# Переключение на пользователя без root прав
-USER appuser
+COPY backend/ .
 
 # Переменные окружения
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
+# Создание пользователя без root прав
+RUN groupadd -r appuser && useradd -r -g appuser appuser && \
+    chown -R appuser:appuser /app
+USER appuser
+
+# Expose port (Railway автоматически настроит $PORT)
 EXPOSE 8000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8000/health')" || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import requests; requests.get('http://localhost:' + str(__import__('os').environ.get('PORT', '8000')) + '/health')" || exit 1
 
-# Запуск приложения с поддержкой динамического порта (для Railway/Heroku)
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Запуск приложения с динамическим портом
+CMD sh -c "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1"
