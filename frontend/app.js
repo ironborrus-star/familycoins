@@ -1,5 +1,5 @@
 // Конфигурация API
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://familycoins2-production.up.railway.app';
 const API_VERSION = '/v1';
 
 // Глобальные переменные
