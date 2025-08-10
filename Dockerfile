@@ -34,4 +34,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:' + str(__import__('os').environ.get('PORT', '8000')) + '/health')" || exit 1
 
 # Запуск приложения с динамическим портом
-CMD sh -c "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1"
+CMD ["python", "-c", "import os; import subprocess; port = os.environ.get('PORT', '8000'); subprocess.run(['uvicorn', 'app.main:app', '--host', '0.0.0.0', '--port', port, '--workers', '1'])"]
