@@ -16,19 +16,29 @@ load_dotenv()
 # URL подключения к базе данных
 raw_database_url = os.getenv("DATABASE_URL", "postgresql+asyncpg://user:password@localhost:5432/familycoins")
 
-# Конвертируем обычный postgresql:// в postgresql+asyncpg:// для Railway
-if raw_database_url.startswith("postgresql://") and "asyncpg" not in raw_database_url:
+# ВСЕГДА используем asyncpg для Railway совместимости
+if raw_database_url.startswith("postgresql://"):
+    # Принудительно заменяем на asyncpg
     DATABASE_URL = raw_database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
-    logger.info(f"Converted DATABASE_URL for asyncpg: {DATABASE_URL[:50]}...")
+    logger.info(f"Converted DATABASE_URL for asyncpg: postgresql+asyncpg://...")
+elif raw_database_url.startswith("postgres://"):
+    # Railway иногда использует postgres:// вместо postgresql://
+    DATABASE_URL = raw_database_url.replace("postgres://", "postgresql+asyncpg://", 1)
+    logger.info(f"Converted postgres:// to asyncpg: postgresql+asyncpg://...")
 else:
     DATABASE_URL = raw_database_url
-    logger.info(f"Using DATABASE_URL as is: {DATABASE_URL[:50]}...")
+    logger.info(f"Using DATABASE_URL as is: {DATABASE_URL[:30]}...")
 
 # Настройки для продакшена
 DEBUG = os.getenv("DEBUG", "true").lower() == "true"
 
-# Создаем асинхронный движок
-engine = create_async_engine(DATABASE_URL, echo=DEBUG)
+# Создаем асинхронный движок с принудительным указанием asyncpg
+engine = create_async_engine(
+    DATABASE_URL, 
+    echo=DEBUG,
+    future=True,
+    pool_pre_ping=True
+)
 
 # Создаем фабрику сессий
 async_session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)

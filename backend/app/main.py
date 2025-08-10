@@ -15,6 +15,13 @@ from app.services.init_data import create_default_task_templates
 logging.basicConfig(level=getattr(logging, settings.log_level))
 logger = logging.getLogger(__name__)
 
+# Отладочная информация для Railway
+import os
+logger.info(f"Environment: {settings.environment}")
+logger.info(f"Debug: {settings.debug}")
+logger.info(f"DATABASE_URL prefix: {os.getenv('DATABASE_URL', 'NOT_SET')[:30]}...")
+logger.info(f"Python version: {os.sys.version}")
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
