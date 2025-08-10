@@ -1,4 +1,5 @@
 # Dockerfile для Railway deployment
+# Cache invalidation: v3
 FROM python:3.11-slim
 
 # Установка зависимостей системы

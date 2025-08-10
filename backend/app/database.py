@@ -32,6 +32,12 @@ else:
 # Настройки для продакшена
 DEBUG = os.getenv("DEBUG", "true").lower() == "true"
 
+# Принудительная проверка URL перед созданием движка
+if not DATABASE_URL.startswith("postgresql+asyncpg://"):
+    raise ValueError(f"DATABASE_URL должен использовать asyncpg драйвер. Получен: {DATABASE_URL[:50]}...")
+
+logger.info(f"Creating engine with URL: {DATABASE_URL[:50]}...")
+
 # Создаем асинхронный движок с принудительным указанием asyncpg
 engine = create_async_engine(
     DATABASE_URL, 
