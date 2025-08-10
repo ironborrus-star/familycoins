@@ -7,11 +7,15 @@ RUN apk add --no-cache gettext
 # Копируем статические файлы frontend
 COPY frontend/ /usr/share/nginx/html/
 
-# Копируем шаблон конфигурации nginx
+# Копируем шаблон конфигурации nginx  
 COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf.template
+
+# Копируем startup script
+COPY frontend/startup.sh /startup.sh
+RUN chmod +x /startup.sh
 
 # Expose port для Railway
 EXPOSE $PORT
 
-# Скрипт запуска с подстановкой PORT
-CMD envsubst '$PORT' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'
+# Запуск через startup script
+CMD ["/startup.sh"]
