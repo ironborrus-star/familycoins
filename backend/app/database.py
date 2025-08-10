@@ -13,6 +13,10 @@ load_dotenv()
 # URL подключения к базе данных
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://user:password@localhost:5432/familycoins")
 
+# Конвертируем обычный postgresql:// в postgresql+asyncpg:// для Railway
+if DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+
 # Настройки для продакшена
 DEBUG = os.getenv("DEBUG", "true").lower() == "true"
 

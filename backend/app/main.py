@@ -1,6 +1,7 @@
 """
 Основное приложение FastAPI для FamilyCoins
 """
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import logging
@@ -14,6 +15,32 @@ from app.services.init_data import create_default_task_templates
 logging.basicConfig(level=getattr(logging, settings.log_level))
 logger = logging.getLogger(__name__)
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Управление жизненным циклом приложения"""
+    # Startup
+    logger.info(f"Starting {settings.project_name} in {settings.environment} mode")
+    
+    try:
+        await create_tables()
+        
+        # Инициализируем данные по умолчанию
+        async for db in get_async_session():
+            await create_default_task_templates(db)
+            break
+        
+        logger.info("Application startup completed")
+    except Exception as e:
+        logger.error(f"Startup failed: {e}")
+        raise
+    
+    yield
+    
+    # Shutdown
+    logger.info("Application shutdown")
+
+
 # Создаем приложение FastAPI
 app = FastAPI(
     title=settings.project_name,
@@ -23,6 +50,7 @@ app = FastAPI(
     openapi_url=f"{settings.api_v1_str}/openapi.json" if settings.debug else None,
     docs_url=f"{settings.api_v1_str}/docs" if settings.debug else None,
     redoc_url=f"{settings.api_v1_str}/redoc" if settings.debug else None,
+    lifespan=lifespan,
 )
 
 # CORS настройки
@@ -41,21 +69,6 @@ app.include_router(store.router, prefix="/v1/store", tags=["store"])
 app.include_router(coins.router, prefix="/v1/coins", tags=["coins"])
 app.include_router(stats.router, prefix="/v1/stats", tags=["stats"])
 app.include_router(goals.router, tags=["goals"])
-
-
-@app.on_event("startup")
-async def startup():
-    """Инициализация при запуске"""
-    logger.info(f"Starting {settings.project_name} in {settings.environment} mode")
-    
-    await create_tables()
-    
-    # Инициализируем данные по умолчанию
-    async for db in get_async_session():
-        await create_default_task_templates(db)
-        break
-    
-    logger.info("Application startup completed")
 
 
 @app.get("/")
