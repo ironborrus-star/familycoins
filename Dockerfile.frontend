@@ -1,21 +1,14 @@
 # Dockerfile для Frontend (nginx)
 FROM nginx:alpine
 
-# Устанавливаем envsubst для подстановки переменных
-RUN apk add --no-cache gettext
-
 # Копируем статические файлы frontend
 COPY frontend/ /usr/share/nginx/html/
 
-# Копируем шаблон конфигурации nginx  
-COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf.template
+# Копируем конфигурацию nginx
+COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
-# Копируем startup script
-COPY frontend/startup.sh /startup.sh
-RUN chmod +x /startup.sh
+# Expose port 80
+EXPOSE 80
 
-# Expose port для Railway
-EXPOSE $PORT
-
-# Запуск через startup script
-CMD ["/startup.sh"]
+# Стандартный запуск nginx
+CMD ["nginx", "-g", "daemon off;"]
