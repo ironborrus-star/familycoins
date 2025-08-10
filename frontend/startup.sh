@@ -24,5 +24,4 @@ envsubst '$PORT' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/d
 echo "Generated nginx config:"
 cat /etc/nginx/conf.d/default.conf
 
-# Запускаем nginx
-exec nginx -g 'daemon off;'
+echo "Frontend is ready!"
