@@ -89,8 +89,9 @@ async def health_check():
     """Проверка здоровья сервиса"""
     try:
         # Проверка подключения к базе данных
+        from sqlalchemy import text
         async for db in get_async_session():
-            await db.execute("SELECT 1")
+            await db.execute(text("SELECT 1"))
             break
         
         from datetime import datetime
