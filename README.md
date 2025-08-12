@@ -11,8 +11,18 @@
 git clone https://github.com/your-username/familycoins.git
 cd familycoins
 
-# Запустите с Docker
-docker-compose up -d
+# Backend (в отдельном терминале)
+cd backend
+pip install -r requirements.txt
+cp .env.example .env
+# Настройте переменные в .env
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+# Frontend (в отдельном терминале)
+cd frontend
+cp .env.example .env
+# Настройте переменные в .env
+python start_server.py
 
 # Приложение доступно на:
 # Frontend: http://localhost:8080
@@ -22,15 +32,28 @@ docker-compose up -d
 
 ### Деплой в облаке
 
-#### Railway (рекомендуется для начала)
-1. Создайте аккаунт на [railway.app](https://railway.app)
-2. Подключите этот GitHub репозиторий
-3. Railway автоматически создаст PostgreSQL и Redis
-4. Настройте переменные окружения (см. `.env.example`)
-5. Готово! 🎉
+#### Railway (рекомендуется)
 
-#### DigitalOcean
-Следуйте инструкциям в [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)
+**Backend:**
+1. Создайте аккаунт на [railway.app](https://railway.app)
+2. Создайте новый проект и подключите этот GitHub репозиторий
+3. Railway автоматически обнаружит `backend/railway.toml`
+4. Добавьте PostgreSQL и Redis сервисы
+5. Настройте переменные окружения из `backend/.env.example`
+
+**Frontend:**
+1. В том же проекте Railway добавьте новый сервис
+2. Подключите тот же GitHub репозиторий
+3. Railway автоматически обнаружит `frontend/railway.toml`
+4. Настройте переменные окружения из `frontend/.env.example`
+5. Укажите URL backend сервиса в `API_BASE_URL`
+
+Подробные инструкции: [docs/deployment/](./docs/deployment/)
+
+#### Другие платформы
+- **DigitalOcean**: [docs/deployment/DEPLOYMENT_GUIDE.md](./docs/deployment/DEPLOYMENT_GUIDE.md)
+- **Vercel/Netlify**: для frontend
+- **Heroku**: альтернатива Railway
 
 ## 📁 Структура проекта
 
@@ -43,11 +66,23 @@ familycoins/
 │   │   ├── schemas/        # Pydantic схемы
 │   │   ├── services/       # Бизнес логика
 │   │   └── utils/          # Утилиты
-│   ├── Dockerfile          # Docker образ
-│   └── requirements.txt    # Python зависимости
+│   ├── alembic/            # Миграции БД
+│   ├── tests/              # Тесты backend
+│   ├── Dockerfile          # Docker образ backend
+│   ├── railway.toml        # Конфигурация Railway для backend
+│   ├── requirements.txt    # Python зависимости
+│   └── .env.example        # Пример переменных backend
 ├── frontend/               # HTML/CSS/JS фронтенд
-├── .github/workflows/      # CI/CD пайплайны
-└── docs/                   # Документация
+│   ├── *.html              # HTML страницы
+│   ├── *.css               # Стили
+│   ├── *.js                # JavaScript логика
+│   ├── Dockerfile          # Docker образ frontend
+│   ├── railway.toml        # Конфигурация Railway для frontend
+│   └── .env.example        # Пример переменных frontend
+├── docs/                   # Документация
+│   ├── deployment/         # Инструкции по развертыванию
+│   └── DOC/                # Техническая документация
+└── README.md               # Этот файл
 ```
 
 ## 🛠 Технологии

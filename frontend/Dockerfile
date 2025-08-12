@@ -5,16 +5,16 @@ FROM nginx:alpine
 RUN apk add --no-cache gettext
 
 # Копируем статические файлы frontend
-COPY frontend/*.html /usr/share/nginx/html/
-COPY frontend/*.css /usr/share/nginx/html/
-COPY frontend/*.js /usr/share/nginx/html/
+COPY *.html /usr/share/nginx/html/
+COPY *.css /usr/share/nginx/html/
+COPY *.js /usr/share/nginx/html/
 
 # Копируем шаблоны конфигурации
-COPY frontend/config.js.template /usr/share/nginx/html/
-COPY frontend/nginx.conf.template /etc/nginx/conf.d/default.conf.template
+COPY config.js.template /usr/share/nginx/html/
+COPY nginx.conf.template /etc/nginx/conf.d/default.conf.template
 
 # Копируем startup script
-COPY frontend/startup.sh /docker-entrypoint.d/30-frontend-config.sh
+COPY startup.sh /docker-entrypoint.d/30-frontend-config.sh
 RUN chmod +x /docker-entrypoint.d/30-frontend-config.sh
 
 # Устанавливаем переменные окружения по умолчанию
