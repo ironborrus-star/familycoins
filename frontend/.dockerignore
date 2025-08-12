@@ -1,0 +1,40 @@
+# Git
+.git
+.gitignore
+
+# Development files
+.env
+.vscode/
+.idea/
+
+# Node.js (if using)
+node_modules/
+npm-debug.log*
+package-lock.json
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+*.swp
+*.swo
+*~
+
+# Docker development files
+docker-compose*.yml
+Dockerfile.*
+
+# Backend files (not needed in frontend)
+../backend/
+
+# Documentation
+../DOC/
+../docs/
+
+# Development tools
+start_server.py

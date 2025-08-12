@@ -1,0 +1,48 @@
+# Git
+.git
+.gitignore
+
+# Development files
+.env
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+*.swp
+*.swo
+*~
+
+# Docker development files
+docker-compose*.yml
+Dockerfile.*
+
+# Frontend files (not needed in backend)
+../frontend/
+
+# Documentation (keep README.md for backend)
+../DOC/
+../docs/
+
+# Tests (uncomment if you don't want tests in production image)
+# tests/

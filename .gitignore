@@ -63,7 +63,7 @@ yarn-error.log*
 *.sqlite3
 
 # Docker
-.dockerignore
+# .dockerignore files are now kept (needed for each service)
 
 # Node modules (если добавите фронтенд фреймворк)
 node_modules/
@@ -84,8 +84,9 @@ secrets.yaml
 *.key
 !**/ssl/*.key.example
 
-# Alembic
-backend/alembic/versions/
+# Alembic (exclude auto-generated migration files)
+backend/alembic/versions/*.py
+!backend/alembic/versions/__init__.py
 
 # Test coverage
 htmlcov/
@@ -105,3 +106,19 @@ coverage.xml
 # Monitoring data
 backend/monitoring/grafana/data/
 backend/monitoring/prometheus/data/
+
+# Railway deployment artifacts
+.railway/
+
+# Frontend build artifacts (if using build tools)
+frontend/dist/
+frontend/build/
+
+# Generated config files
+frontend/config.js
+
+# Local development servers
+frontend/*.pid
+
+# Temporary deployment files
+*UPDATE_INSTRUCTIONS.md
